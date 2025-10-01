@@ -6,11 +6,15 @@ export default async function WatchPage({ params }: { params: { id: string } }) 
   const movie = await getMovieDetails(params.id);
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 pb-10">
       <div className="container mx-auto px-4 py-8">
         <MoviePlayer movieId={movie.id} title={movie.title} />
 
-        <div className="mt-8 bg-white rounded-xl shadow-lg p-8">
+        <div className="w-full max-w-4xl mx-auto mt-4 text-center text-gray-900 text-lg font-semibold drop-shadow-lg rounded-lg">
+          {movie.title} ({movie.release_date?.slice(0, 4)})
+        </div>
+
+        <div className="mt-8 bg-white rounded-xl shadow-lg p-8 max-w-4xl mx-auto">
           <div className="flex flex-col md:flex-row gap-8">
             <div className="md:w-1/3">
               <Image
@@ -33,7 +37,7 @@ export default async function WatchPage({ params }: { params: { id: string } }) 
                 <span className="text-gray-600">{movie.runtime} min</span>
               </div>
               <div className="mb-4">
-                {movie.genres?.map((genre) => (
+                {movie.genres?.map((genre: { id: number; name: string }) => (
                   <span
                     key={genre.id}
                     className="inline-block bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-sm mr-2 mb-2"
@@ -50,7 +54,7 @@ export default async function WatchPage({ params }: { params: { id: string } }) 
                 <div>
                   <h3 className="text-2xl font-bold mb-4 text-gray-800">Cast</h3>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {movie.credits.cast.slice(0, 8).map((actor) => (
+                    {movie.credits.cast.slice(0, 8).map((actor: { id: number; name: string; character: string; profile_path: string | null }) => (
                       <div key={actor.id} className="text-center">
                         {actor.profile_path && (
                           <Image
