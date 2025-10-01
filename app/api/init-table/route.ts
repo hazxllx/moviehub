@@ -1,28 +1,23 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase';
 
-const supabase = createClient();
-
 export async function GET() {
-  const sql = `
-    CREATE EXTENSION IF NOT EXISTS pgcrypto;
-    CREATE TABLE IF NOT EXISTS profiles (
-      id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-      user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE,
-      username text UNIQUE NOT NULL,
-      created_at timestamp with time zone DEFAULT timezone('utc'::text, now())
-    );
-  `;
-  try {
-    // Run SQL command
-    const { error } = await supabase.rpc('execute_sql', { sql_text: sql });
-    // Supabase currently doesn't support direct raw query here in SDK,
-    // so you must create a `execute_sql` stored procedure or run manually once.
-    // Alternatively, you can run SQL from your DB console on deploy.
-    if (error) throw error;
+  const supabase = createClient();
 
-    return NextResponse.json({ success: true });
+  try {
+    // Note: Supabase JS client does NOT support arbitrary raw SQL execution.
+    // Recommended: Run this SQL manually once in Supabase SQL Editor before deploying.
+
+    // You can optionally try running RPC or stored procedures if available:
+    // For example, if you have a stored procedure named "create_profiles_table":
+    // await supabase.rpc('create_profiles_table');
+
+    return NextResponse.json({
+      message:
+        'To initialize database, please run SQL statements manually in Supabase SQL Editor.',
+      success: true,
+    });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: error.message ?? 'Unknown error' }, { status: 500 });
   }
 }
